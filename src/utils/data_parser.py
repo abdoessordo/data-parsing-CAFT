@@ -1,6 +1,5 @@
-
-from traceback import print_tb
-
+from xml import dom
+from utils.helper import Helper
 
 class parser:
     def get_folder_id(filename: str) -> str:
@@ -20,11 +19,20 @@ class parser:
         return DATA
 
     def handle_DomainDetects(filename):
-        # DATA = {}
-        # with open(filename, "r") as f:
-        #     res = f.read().split("\n")[5::]
-        #     return res
-        pass
+        DATA = []
+        with open(filename, "r") as f:
+            res = f.read().strip("\n").split("\n")
+            for domains in res:
+                if Helper.checkDomain(domains):
+                    for domain in domains.split(", "):
+                        domain_data = {}
+
+                        domain_data["name"] = domain.split(
+                            " ")[0].strip("]").strip("[")
+                        domain_data["domain"] = domain.split(" ")[1]
+                        DATA.append(domain_data)
+
+        return Helper.ObjectSet(DATA)
 
     def handle_InstalledBrowsers(filename):
         DATA = []
