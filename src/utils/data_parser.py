@@ -1,4 +1,3 @@
-from xml import dom
 from utils.helper import Helper
 
 class parser:
@@ -76,4 +75,37 @@ class parser:
         return DATA
 
     def handle_UserInformation(filename):
-        pass
+        with open(filename, "r") as f:
+            res = [part.strip("\n") for part in "\n".join(f.read().split("\n")[5::]).split('\n\n')]
+            DATA = {}
+            
+            userInfo = {}
+            for info in res[0].split("\n"):
+                userInfo[info.split(": ")[0]] = info.split(": ")[1]
+            
+            keyboards = []
+            for info in res[1].split("\n")[1::]:
+                keyboard = {
+                    "language": info.split(" ")[0],
+                    "region": info.split(" ")[1].strip(")").strip("(")
+                }
+                keyboards.append(keyboard)
+            
+            hardwares = {}
+            for i, info in enumerate(res[2].split("\n")[1::]):
+                hardwares[f'{info.split(": ")[0]}_{i}'] = info.split(": ")[1].replace("   , ", ", ")
+
+
+            anti_viruses = []
+            for antivirus in res[3].split("\n")[1::]:
+                anti_viruses.append(antivirus)
+
+            print(anti_viruses)
+
+            DATA["userInfo"] = userInfo
+            DATA["keyboards"] = keyboards
+            DATA["hardwares"] = hardwares
+            DATA["anti_viruses"] = anti_viruses
+
+
+        return DATA
